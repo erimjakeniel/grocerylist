@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<div class="container">
+  <h2>GROCERY LIST</h2>
+
+  <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Add Items</button>
+
+
+  <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Add Groceries</h4>
+        </div>
+        <div class="modal-body">
+          <input type="text" class="form-control" name="item" placeholder="Item"><br><br>
+            <input type="text" class="form-control" name="quantity" placeholder="Quantity"><br><br>
+            <input type="text" class="form-control" name="priority" placeholder="Priority"><br><br>
+           
+        </div>
+        <div class="modal-footer">
+          <button  id="addItem" type="button" class="btn btn-default btn btn-success" data-dismiss="modal">ADD TO LIST</button>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+  
+</div>
+<div class="col-md-4"></div>
+</div>
+<br><br>
+<div class="row class-list">
+    <div class="container ">
+        <table class="table table-bordered ">
+            <thead class="thead bg-info">
+                <tr class=" text-center">
+                    <th scope="col">
+                        <h6>Item</h6>
+                    </th>
+                    <th scope="col">
+                        <h6>Quantity</h6>
+                    </th>
+                    <th scope="col">
+                        <h6>Priority</h6>
+                    </th>
+                </tr>
+            </thead>
+            <tbody id="tbody" class="text-center">
+            </tbody>
+        </table>
+
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $("#addItem").on('click', function (e) {
+            e.preventDefault(e);
+            $.ajax({
+                url: "item/retrieve/all",
+                crossDomain: true,
+                type: "GET",
+                success: function (data) {
+                    data.forEach(element => {
+                        $("#tbody").append("<tr style ='text-align:center'><td>" + element.item + "</td><td>" + element.quantity + "</td><td>" + element.priority + "</td></tr>");
+                
+                    });
+                },
+                error: function (e) {
+                    console.log(e);
+                }
+            })
+        })
+
+        $("#addItem").on('click', function (e) {
+            e.preventDefault(e);
+            var boolean = true;
+            var item = $('input[name="item"]');
+            var quantity = $('input[name="quantity"]');
+            var priority = $('input[name="priority"]');
+            $('input[type="text"]').each(function () {
+                if ($(this).val() == "") {
+                    boolean = false;
+                }
+            })
+
+            if (boolean == true) {
+                $.ajax({
+                    url: "item/create",
+                    crossDomain: true,
+                    type: "PUT",
+                    data: {
+                        item: item.val(),
+                        quantity: quantity.val(),
+                        priority: priority.val()
+                        
+                    },
+                    success: function (data) {
+                        console.log(data);
+                    },
+                    error: function (e) {
+                        console.log(e);
+                    }
+                })
+            }
+            else {
+                alert('All fields must be filled!')
+            }
+
+            $('input[type="text"]').empty();
+
+        });
+    });
+</script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+</body>
+</html>
